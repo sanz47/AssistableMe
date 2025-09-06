@@ -36,9 +36,10 @@ const MicIcon: React.FC<{className?: string}> = ({ className }) => (
 
 interface TaskSelectionProps {
     onTaskSelect: (task: string) => void;
+    onGoBack: () => void;
 }
 
-export const TaskSelection: React.FC<TaskSelectionProps> = ({ onTaskSelect }) => {
+export const TaskSelection: React.FC<TaskSelectionProps> = ({ onTaskSelect, onGoBack }) => {
     const [isListening, setIsListening] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>('');
     const recognitionRef = useRef<any | null>(null);
@@ -101,7 +102,7 @@ export const TaskSelection: React.FC<TaskSelectionProps> = ({ onTaskSelect }) =>
 
     return (
         <>
-            <Header points={0} />
+            <Header points={0} onGoBack={onGoBack} />
             <main className="container mx-auto max-w-4xl px-4 py-8">
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-slate-800">What would you like to do?</h2>

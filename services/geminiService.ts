@@ -29,6 +29,15 @@ const taskStepsSchema = {
   },
 };
 
+const COLOR_BLINDNESS_PROMPTS = {
+  'Protanopia': 'The user has Protanopia (red-blindness) and has no red cones. Adjust the image to make it easier to see by shifting red hues towards distinguishable colors like oranges or blues, and increasing contrast with greens.',
+  'Protanomaly': 'The user has Protanomaly (red-weakness) and has malfunctioning red cones. Enhance the reds in the image to make them more vibrant and distinct from greens.',
+  'Deuteranopia': 'The user has Deuteranopia (green-blindness) and has no green cones. Adjust the image by shifting green hues towards distinguishable colors like magentas or oranges, and increasing contrast with reds.',
+  'Deuteranomaly': 'The user has Deuteranomaly (green-weakness) and has malfunctioning green cones. Enhance the greens in the image to make them more vibrant and distinct from reds.',
+  'Tritanopia': 'The user has Tritanopia (blue-blindness) and has no blue cones. Adjust the image by shifting blues towards distinguishable colors like teals or reds, and increasing contrast with yellows.',
+  'Tritanomaly': 'The user has Tritanomaly (blue-weakness) and has malfunctioning blue cones. Enhance the blues and yellows in the image to make them more distinct from each other.'
+};
+
 export async function generateTaskSteps(taskName: string): Promise<TaskStep[]> {
   try {
     const response = await ai.models.generateContent({
@@ -60,7 +69,6 @@ export async function generateImageForStep(prompt: string): Promise<string> {
         },
     });
 
-    // Find the first image part in the response
     const imagePart = response.candidates?.[0]?.content?.parts.find(p => !!p.inlineData);
 
     if (imagePart && imagePart.inlineData) {
@@ -69,7 +77,6 @@ export async function generateImageForStep(prompt: string): Promise<string> {
         return `data:${mimeType};base64,${base64ImageBytes}`;
     }
     
-    // If no image part is found, throw an error
     throw new Error("No image data was found in the API response.");
 
   } catch (error) {
@@ -92,21 +99,55 @@ export async function findMatchingTask(transcript: string, availableTasks: strin
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
-        // Disable thinking for faster, more direct responses for this classification task
         thinkingConfig: { thinkingBudget: 0 }
       }
     });
 
     const matchedTask = response.text.trim();
     
-    // Check if the model's response is a valid task from the list
     if (availableTasks.includes(matchedTask)) {
       return matchedTask;
     }
 
-    return null; // Model responded with "None" or an invalid task name
+    return null;
   } catch (error) {
     console.error("Error finding matching task with AI:", error);
-    return null; // Return null to handle the error gracefully in the UI
+    return null;
+  }
+}
+
+export async function adjustImageForColorBlindness(
+  base64ImageData: string,
+  mimeType: string,
+  colorBlindnessType: keyof typeof COLOR_BLINDNESS_PROMPTS
+): Promise<string> {
+  try {
+    const promptText = `You are an expert accessibility tool. ${COLOR_BLINDNESS_PROMPTS[colorBlindnessType]}. Do not add, remove, or change any objects in the image. Only perform color correction for accessibility.`;
+    
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image-preview',
+      contents: {
+        parts: [
+          { inlineData: { data: base64ImageData, mimeType } },
+          { text: promptText },
+        ],
+      },
+      config: {
+        responseModalities: [Modality.IMAGE, Modality.TEXT],
+      },
+    });
+
+    const imagePart = response.candidates?.[0]?.content?.parts.find(p => !!p.inlineData);
+    if (imagePart && imagePart.inlineData) {
+      const base64ImageBytes: string = imagePart.inlineData.data;
+      const responseMimeType: string = imagePart.inlineData.mimeType;
+      return `data:${responseMimeType};base64,${base64ImageBytes}`;
+    }
+    
+    throw new Error("No corrected image was found in the AI response.");
+  } catch (error) {
+    console.error(`Error adjusting image for ${colorBlindnessType}:`, error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to adjust image. Details: ${errorMessage}`);
   }
 }

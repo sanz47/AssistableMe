@@ -1,6 +1,6 @@
 {
-  "name": "AI Car Wash Guide",
-  "description": "An interactive, step-by-step guide to washing your car, with AI-generated images illustrating each step for a perfectly clean vehicle.",
+  "name": "AI Accessibility Suite",
+  "description": "An AI-powered accessibility app with tools for visual impairments (color blindness correction) and cognitive disabilities (step-by-step task guides).",
   "requestFramePermissions": [
     "microphone"
   ]
