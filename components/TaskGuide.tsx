@@ -4,43 +4,50 @@ import { StepCard } from './StepCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { ErrorDisplay } from './ErrorDisplay';
 import { generateTaskSteps } from '../services/geminiService';
-import type { TaskStep } from '../types';
+import type { TaskStep, TaskProgress } from '../types';
 import { VoiceControl } from './VoiceControl';
 
 interface TaskGuideProps {
     taskName: string;
     onGoBack: () => void;
+    initialProgress: TaskProgress;
+    onProgressUpdate: (taskName: string, progress: Partial<TaskProgress>) => void;
 }
 
-export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack }) => {
-  const [steps, setSteps] = useState<TaskStep[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initialProgress, onProgressUpdate }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(!initialProgress.steps || initialProgress.steps.length === 0);
   const [error, setError] = useState<string | null>(null);
-  const [totalPoints, setTotalPoints] = useState<number>(0);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [confettiStep, setConfettiStep] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string>('');
 
   const stepRefs = useRef<React.RefObject<HTMLElement>[]>([]);
 
+  // Get progress state from props
+  const { steps, completedSteps, totalPoints } = initialProgress;
+
   const fetchSteps = useCallback(async () => {
+    // This is called only when steps are needed
     setIsLoading(true);
     setError(null);
     try {
       const fetchedSteps = await generateTaskSteps(taskName);
-      setSteps(fetchedSteps);
-      stepRefs.current = fetchedSteps.map(() => createRef<HTMLElement>());
+      onProgressUpdate(taskName, { steps: fetchedSteps });
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : `An unknown error occurred while fetching steps for ${taskName}.`);
     } finally {
       setIsLoading(false);
     }
-  }, [taskName]);
+  }, [taskName, onProgressUpdate]);
 
   useEffect(() => {
-    fetchSteps();
-  }, [fetchSteps]);
+    if (!steps || steps.length === 0) {
+      fetchSteps();
+    } else {
+      // Steps are loaded, ensure refs match the step count
+      stepRefs.current = steps.map((_, i) => stepRefs.current[i] || createRef<HTMLElement>());
+    }
+  }, [steps, fetchSteps]);
 
   useEffect(() => {
     if (toastMessage) {
@@ -56,9 +63,13 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack }) => {
 
     const newCompletedSteps = new Set(completedSteps);
     newCompletedSteps.add(stepIndex);
-    setCompletedSteps(newCompletedSteps);
+    const newTotalPoints = totalPoints + points;
+    
+    onProgressUpdate(taskName, {
+        completedSteps: newCompletedSteps,
+        totalPoints: newTotalPoints,
+    });
 
-    setTotalPoints(prevPoints => prevPoints + points);
     setToastMessage(`+${points} points! Great job!`);
     
     setConfettiStep(stepIndex);
@@ -129,7 +140,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack }) => {
 
     return (
       <div className="space-y-8">
-        {steps.map((step, index) => (
+        {(steps || []).map((step, index) => (
           <StepCard
             key={index}
             ref={stepRefs.current[index]}

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { TaskStep } from '../types';
-import { generateImageForStep } from '../services/geminiService';
+import { generateImage } from '../services/geminiService';
 import { Confetti } from './Confetti';
+import { SpeakButton } from './SpeakButton';
 
 interface StepCardProps {
   step: TaskStep;
@@ -14,7 +15,7 @@ interface StepCardProps {
 const ImagePlaceholder: React.FC<{ message: string, isError?: boolean }> = ({ message, isError = false }) => (
   <div className={`w-full aspect-video rounded-lg flex flex-col items-center justify-center bg-slate-200 ${isError ? 'ring-2 ring-red-400' : ''}`}>
     {isError ? (
-       <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+       <svg xmlns="http://www.w.org/2000/svg" className="h-10 w-10 text-red-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
        </svg>
     ) : (
@@ -39,23 +40,22 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchImage = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const url = await generateImageForStep(step.image_prompt);
-                setImageUrl(url);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unknown image generation error');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchImage();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchImage = useCallback(async (isSimplified: boolean = false) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const url = await generateImage(step.image_prompt, isSimplified);
+            setImageUrl(url);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown image generation error');
+        } finally {
+            setIsLoading(false);
+        }
     }, [step.image_prompt]);
+
+    useEffect(() => {
+        fetchImage(false);
+    }, [fetchImage]);
     
     const POINTS_PER_STEP = 10;
 
@@ -72,7 +72,14 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
                     ) : stepNumber}
                 </div>
                 <div className="flex-grow">
-                    <h2 className="text-xl font-bold text-slate-900">{step.title}</h2>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-bold text-slate-900">{step.title}</h2>
+                        <SpeakButton
+                            textToSpeak={`${step.title}. ${step.description}`}
+                            ariaLabel={`Read step ${stepNumber}: ${step.title}`}
+                            className="-mr-2"
+                        />
+                    </div>
                     <p className="mt-1 text-slate-600">{step.description}</p>
                 </div>
                 {isCompleted && <CheckmarkIcon />}
@@ -88,17 +95,26 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
                     />
                 )}
             </div>
-            {!isCompleted && (
-                <div className="mt-6 text-right">
+            <div className="mt-6 flex items-center justify-between">
+                <button
+                    onClick={() => fetchImage(true)}
+                    className="px-4 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg shadow-sm hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-all text-sm disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+                    disabled={isLoading}
+                    aria-label="Generate a simpler alternative image for this step"
+                >
+                    {isLoading ? 'Generating...' : 'Generate Another Image'}
+                </button>
+                {!isCompleted && (
                     <button
                         onClick={() => onComplete(stepNumber - 1, POINTS_PER_STEP)}
-                        className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all transform hover:scale-105"
+                        className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed"
                         aria-label={`Mark step ${stepNumber} as done`}
+                        disabled={isLoading}
                     >
                         Mark as Done
                     </button>
-                </div>
-            )}
+                )}
+            </div>
         </div>
       </article>
     );
