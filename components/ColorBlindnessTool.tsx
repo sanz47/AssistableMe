@@ -135,17 +135,7 @@ export const ColorBlindnessTool: React.FC<{ onGoBack: () => void; totalPoints: n
                             </div>
                             <div className="flex items-center justify-start md:col-start-3 lg:col-start-auto lg:justify-end gap-4">
                                 <div className="flex items-center gap-2">
-                                     <span className="text-sm font-medium text-slate-700 dark:text-slate-300 hidden sm:inline">Theme</span>
-                                     <button onClick={toggleTheme} type="button" className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${theme === 'dark' ? 'bg-sky-600' : 'bg-slate-200'}`} role="switch" aria-checked={theme === 'dark'} aria-label="Toggle theme">
-                                        <span className={`pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}>
-                                            <span className={`absolute inset-0 flex h-full w-full items-center justify-center transition-opacity ${theme === 'dark' ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'}`} aria-hidden="true">
-                                                <SunIcon className="h-3 w-3 text-slate-400" />
-                                            </span>
-                                             <span className={`absolute inset-0 flex h-full w-full items-center justify-center transition-opacity ${theme === 'dark' ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'}`} aria-hidden="true">
-                                                <MoonIcon className="h-3 w-3 text-sky-600" />
-                                            </span>
-                                        </span>
-                                     </button>
+                                     
                                 </div>
                             </div>
                             <button onClick={handleGenerate} disabled={isLoading || !originalImage} className="w-full justify-self-stretch px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed">
