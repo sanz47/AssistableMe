@@ -46,19 +46,7 @@ export const GlobalAccessibilityControls: React.FC<
 > = ({ isDarkMode, onToggleDarkMode, brightness, onBrightnessChange }) => {
   return (
     <>
-{/*       {/* Dark Mode Toggle */}
-      <button
-        onClick={onToggleDarkMode}
-        className={`fixed top-4 right-4 z-50 h-12 w-12 rounded-full flex items-center justify-center shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 bg-white text-slate-600 hover:bg-slate-100 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600`}
-        aria-label={isDarkMode ? "Disable dark mode" : "Enable dark mode"}
-        title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
-      >
-        {isDarkMode ? (
-          <SunIcon className="h-6 w-6 text-yellow-300" />
-        ) : (
-          <MoonIcon className="h-6 w-6" />
-        )}
-      </button> */}
+{/*  */}
 
       {/* Brightness Slider */}
       <div className="fixed bottom-4 right-4 z-40 bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-lg flex items-center space-x-3 dark:bg-slate-800/80">
