@@ -2,7 +2,8 @@
 
 An AI-powered web application designed to assist users with visual, cognitive, and hearing impairments. This suite leverages the Google Gemini API to provide a set of powerful, on-demand tools in an accessible and user-friendly interface.
 
-![AI Accessibility Suite Screenshot](https://storage.googleapis.com/aistudio-hosting-project-prod.appspot.com/a6fb6315-325b-4375-9e6e-07a840e69ddc/instances/55029054-9a79-4592-8868-e6d8a77a164b/files/Cognitive%20Disability%20-%20Task%20Selection.png)
+<img width="1912" height="987" alt="image" src="https://github.com/user-attachments/assets/48449302-b47d-42ee-b266-a3f85840ed6a" />
+
 
 ---
 
@@ -64,17 +65,29 @@ To run this project locally, follow these steps:
 - The project files from this repository.
 
 ### Local Setup
-1.  **Environment Variables**: The application is configured to use an API key from `process.env.API_KEY`. You will need to ensure this environment variable is available in your deployment environment. For local development, you might set this up in your shell or via a deployment platform's secret manager.
 
-2.  **Open `index.html`**: This project is built with ES modules and can be run directly in a modern web browser that supports them. Simply open the `index.html` file. For best results, serve the project directory using a simple local server to avoid potential issues with file pathing.
+## 1. Create Environment File
+In the project root directory, create a file named **`.env.local`** and add your API key:
 
-    For example, using Python's built-in server:
-    ```bash
-    # From the project's root directory
-    python3 -m http.server
-    ```
-    Then, navigate to `http://localhost:8000` in your browser.
+```bash
+GEMINI_API_KEY=your_api_key_here
+```
+## 2. Install Dependencies
 
+Install all the required dependencies by running:
+```
+npm install
+
+```
+### 3. Start Development Server
+
+Run the following command to start the local development server:
+
+```
+npm run dev
+```
+
+After starting, the application will be available at the URL shown in your terminal (commonly http://localhost:5173)
 ---
 
 ## 📂 Project Structure
