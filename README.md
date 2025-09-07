@@ -1,4 +1,4 @@
-# AI Accessibility Suite
+# AssistableMe
 
 An AI-powered web application designed to assist users with visual, cognitive, and hearing impairments. This suite leverages the Google Gemini API to provide a set of powerful, on-demand tools in an accessible and user-friendly interface.
 

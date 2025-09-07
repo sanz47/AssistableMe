@@ -27,7 +27,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ points, taskName, onGoBack }) => {
-  const fullTitle = taskName ? `Guide: ${taskName}` : 'AI Task Guide';
+  const fullTitle = taskName ? `Guide: ${taskName}` : 'AssistableMe';
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-10">
