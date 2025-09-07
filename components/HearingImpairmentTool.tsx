@@ -45,7 +45,7 @@ const StopIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
-export const HearingImpairmentTool: React.FC<{ onGoBack: () => void; }> = ({ onGoBack }) => {
+export const HearingImpairmentTool: React.FC<{ onGoBack: () => void; totalPoints: number; }> = ({ onGoBack, totalPoints }) => {
     const [prompt, setPrompt] = useState('');
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -134,7 +134,7 @@ export const HearingImpairmentTool: React.FC<{ onGoBack: () => void; }> = ({ onG
 
     return (
         <>
-            <Header points={0} taskName="Visual Communication Tool" onGoBack={onGoBack} />
+            <Header points={totalPoints} taskName="Visual Communication Tool" onGoBack={onGoBack} />
             <main className="container mx-auto max-w-4xl px-4 py-8">
                  <div className="bg-white p-6 rounded-xl shadow-lg">
                     <h2 className="text-2xl font-bold text-slate-800">Describe what you want to see</h2>

@@ -80,7 +80,7 @@ export const SpeakButton: React.FC<SpeakButtonProps> = ({ textToSpeak, className
     return (
         <button 
             onClick={handleToggleSpeak} 
-            className={`p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors z-10 ${className}`}
+            className={`p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors z-20 ${className}`}
             aria-label={isSpeaking ? 'Stop reading' : ariaLabel}
         >
             {isSpeaking ? <StopIcon /> : <SpeakIcon />}

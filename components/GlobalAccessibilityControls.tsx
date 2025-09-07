@@ -40,7 +40,7 @@ export const GlobalAccessibilityControls: React.FC<GlobalAccessibilityControlsPr
             </button>
 
             {/* Brightness Slider */}
-            <div className="fixed bottom-4 right-4 z-50 bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-lg flex items-center space-x-3">
+            <div className="fixed bottom-4 right-4 z-40 bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-lg flex items-center space-x-3">
                  <SunIcon className="h-6 w-6 text-slate-600" />
                  <input
                     type="range"

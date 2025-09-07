@@ -25,12 +25,13 @@ const HearingIcon: React.FC = () => (
 
 interface AccessibilityModeSelectionProps {
     onSelectMode: (mode: 'visual' | 'cognitive' | 'hearing') => void;
+    totalPoints: number;
 }
 
-export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProps> = ({ onSelectMode }) => {
+export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProps> = ({ onSelectMode, totalPoints }) => {
     return (
         <>
-            <Header points={0} />
+            <Header points={totalPoints} />
             <main className="container mx-auto max-w-6xl px-4 py-8">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl sm:text-4xl font-bold text-slate-800">AI Accessibility Suite</h2>

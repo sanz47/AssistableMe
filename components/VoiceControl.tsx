@@ -84,7 +84,7 @@ export const VoiceControl: React.FC<VoiceControlProps> = ({ onCommand, setToastM
     return (
         <button
             onClick={handleToggleListening}
-            className={`fixed bottom-5 right-5 z-20 h-16 w-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 ${isListening ? 'bg-red-500 animate-pulse' : 'bg-sky-500 hover:bg-sky-600'}`}
+            className={`fixed bottom-5 right-5 z-50 h-16 w-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 ${isListening ? 'bg-red-500 animate-pulse' : 'bg-sky-500 hover:bg-sky-600'}`}
             aria-label={isListening ? 'Stop listening' : 'Start voice command'}
         >
            <MicIcon />

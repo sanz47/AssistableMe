@@ -58,7 +58,7 @@ const MoonIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 
-export const ColorBlindnessTool: React.FC<{ onGoBack: () => void; }> = ({ onGoBack }) => {
+export const ColorBlindnessTool: React.FC<{ onGoBack: () => void; totalPoints: number; }> = ({ onGoBack, totalPoints }) => {
     const [originalImage, setOriginalImage] = useState<string | null>(null);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [imageDescription, setImageDescription] = useState<string | null>(null);
@@ -116,7 +116,7 @@ export const ColorBlindnessTool: React.FC<{ onGoBack: () => void; }> = ({ onGoBa
     return (
         <div className={theme}>
             <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-                <Header points={0} taskName="Color Vision Tool" onGoBack={onGoBack} />
+                <Header points={totalPoints} taskName="Color Vision Tool" onGoBack={onGoBack} />
                 <main className="container mx-auto max-w-6xl px-4 py-8">
                      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg transition-colors duration-300">
                         {/* Controls */}

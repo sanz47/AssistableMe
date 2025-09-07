@@ -15,7 +15,7 @@ interface StepCardProps {
 const ImagePlaceholder: React.FC<{ message: string, isError?: boolean }> = ({ message, isError = false }) => (
   <div className={`w-full aspect-video rounded-lg flex flex-col items-center justify-center bg-slate-200 ${isError ? 'ring-2 ring-red-400' : ''}`}>
     {isError ? (
-       <svg xmlns="http://www.w.org/2000/svg" className="h-10 w-10 text-red-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+       <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
        </svg>
     ) : (
@@ -72,7 +72,7 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
                     ) : stepNumber}
                 </div>
                 <div className="flex-grow">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between relative">
                         <h2 className="text-xl font-bold text-slate-900">{step.title}</h2>
                         <SpeakButton
                             textToSpeak={`${step.title}. ${step.description}`}

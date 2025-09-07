@@ -12,9 +12,10 @@ interface TaskGuideProps {
     onGoBack: () => void;
     initialProgress: TaskProgress;
     onProgressUpdate: (taskName: string, progress: Partial<TaskProgress>) => void;
+    totalPoints: number;
 }
 
-export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initialProgress, onProgressUpdate }) => {
+export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initialProgress, onProgressUpdate, totalPoints }) => {
   const [isLoading, setIsLoading] = useState<boolean>(!initialProgress.steps || initialProgress.steps.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [confettiStep, setConfettiStep] = useState<number | null>(null);
@@ -23,7 +24,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
   const stepRefs = useRef<React.RefObject<HTMLElement>[]>([]);
 
   // Get progress state from props
-  const { steps, completedSteps, totalPoints } = initialProgress;
+  const { steps, completedSteps, totalPoints: taskPoints } = initialProgress;
 
   const fetchSteps = useCallback(async () => {
     // This is called only when steps are needed
@@ -63,7 +64,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
 
     const newCompletedSteps = new Set(completedSteps);
     newCompletedSteps.add(stepIndex);
-    const newTotalPoints = totalPoints + points;
+    const newTotalPoints = taskPoints + points;
     
     onProgressUpdate(taskName, {
         completedSteps: newCompletedSteps,
@@ -166,7 +167,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
       </footer>
        <VoiceControl onCommand={handleVoiceCommand} setToastMessage={setToastMessage} />
       {toastMessage && (
-        <div className="fixed bottom-24 right-5 z-20 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 animate-fade-in-up">
+        <div className="fixed bottom-24 right-5 z-50 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 animate-fade-in-up">
             {toastMessage}
         </div>
       )}
