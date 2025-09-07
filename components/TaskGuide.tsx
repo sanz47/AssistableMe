@@ -77,7 +77,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
     setTimeout(() => setConfettiStep(null), 4000); // Confetti duration
   };
 
-  const handleVoiceCommand = useCallback((command: string) => {
+  const handleCommandMatch = useCallback((command: string) => {
     const speak = (text: string) => {
         if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(text);
@@ -87,9 +87,8 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
         }
     };
 
-    const readMatch = command.match(/read step (\d+)/);
-    if (readMatch) {
-        const stepNum = parseInt(readMatch[1], 10);
+    if (command.startsWith('read step')) {
+        const stepNum = parseInt(command.replace('read step ', ''), 10);
         if (stepNum > 0 && stepNum <= steps.length) {
             const stepIndex = stepNum - 1;
             const step = steps[stepIndex];
@@ -100,7 +99,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
         }
     }
     
-    if (command.includes('next')) {
+    if (command === 'next') {
         let nextStepIndex = steps.findIndex((_, index) => !completedSteps.has(index));
         if (nextStepIndex === -1) nextStepIndex = steps.length - 1; 
         setToastMessage('Going to the next step.');
@@ -108,7 +107,7 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
         return;
     }
     
-    if (command.includes('previous') || command.includes('go back')) {
+    if (command === 'previous') {
         if (completedSteps.size > 0) {
            const lastCompleted = Math.max(...Array.from(completedSteps));
            const prevIndex = Math.max(0, lastCompleted - 1);
@@ -120,9 +119,31 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
         return;
     }
 
-    setToastMessage(`Unknown command: "${command}"`);
+    if (command === 'go back') {
+        onGoBack();
+        return;
+    }
 
-  }, [steps, completedSteps]);
+    if (command === 'mark as done' || command === 'complete step') {
+        const nextStepIndex = steps.findIndex((_, index) => !completedSteps.has(index));
+        if (nextStepIndex !== -1) {
+            handleCompleteStep(nextStepIndex, 10); // POINTS_PER_STEP
+        } else {
+            setToastMessage('All steps are completed!');
+        }
+        return;
+    }
+
+  }, [steps, completedSteps, onGoBack]);
+
+  const availableCommands = [
+    ...(steps || []).map((_, i) => `read step ${i + 1}`),
+    'next',
+    'previous',
+    'mark as done',
+    'complete step',
+    'go back',
+  ];
 
   const renderContent = () => {
     if (isLoading) {
@@ -162,10 +183,14 @@ export const TaskGuide: React.FC<TaskGuideProps> = ({ taskName, onGoBack, initia
       <main className="container mx-auto max-w-4xl px-4 py-8">
         {renderContent()}
       </main>
-      <footer className="py-6 text-center text-slate-500 text-sm">
+      <footer className="py-6 text-center text-slate-500 text-sm dark:text-slate-400">
         <p>Powered by Gemini AI</p>
       </footer>
-       <VoiceControl onCommand={handleVoiceCommand} setToastMessage={setToastMessage} />
+       <VoiceControl
+        availableCommands={availableCommands}
+        onCommandMatch={handleCommandMatch}
+        setToastMessage={setToastMessage}
+       />
       {toastMessage && (
         <div className="fixed bottom-24 right-5 z-50 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 animate-fade-in-up">
             {toastMessage}

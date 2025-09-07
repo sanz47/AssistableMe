@@ -1,8 +1,8 @@
 import React from 'react';
 
-const InvertIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 0 1 0 16z"/>
+const MoonIcon: React.FC<{ className?: string }> = ({ className }) => (
+     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
     </svg>
 );
 
@@ -13,35 +13,33 @@ const SunIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 interface GlobalAccessibilityControlsProps {
-    isInverted: boolean;
-    onToggleInvert: () => void;
+    isDarkMode: boolean;
+    onToggleDarkMode: () => void;
     brightness: number;
     onBrightnessChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const GlobalAccessibilityControls: React.FC<GlobalAccessibilityControlsProps> = ({
-    isInverted,
-    onToggleInvert,
+    isDarkMode,
+    onToggleDarkMode,
     brightness,
     onBrightnessChange,
 }) => {
     return (
         <>
-            {/* Color Inversion Toggle */}
+            {/* Dark Mode Toggle */}
             <button
-                onClick={onToggleInvert}
-                className={`fixed top-4 right-4 z-50 h-12 w-12 rounded-full flex items-center justify-center shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${
-                    isInverted ? 'bg-sky-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'
-                }`}
-                aria-label={isInverted ? 'Disable color inversion' : 'Enable color inversion'}
-                title={isInverted ? 'Disable Color Inversion' : 'Enable Color Inversion'}
+                onClick={onToggleDarkMode}
+                className={`fixed top-4 right-4 z-50 h-12 w-12 rounded-full flex items-center justify-center shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 bg-white text-slate-600 hover:bg-slate-100 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600`}
+                aria-label={isDarkMode ? 'Disable dark mode' : 'Enable dark mode'}
+                title={isDarkMode ? 'Disable Dark Mode' : 'Enable Dark Mode'}
             >
-                <InvertIcon className="h-6 w-6" />
+                {isDarkMode ? <SunIcon className="h-6 w-6 text-yellow-300" /> : <MoonIcon className="h-6 w-6" />}
             </button>
 
             {/* Brightness Slider */}
-            <div className="fixed bottom-4 right-4 z-40 bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-lg flex items-center space-x-3">
-                 <SunIcon className="h-6 w-6 text-slate-600" />
+            <div className="fixed bottom-4 right-4 z-40 bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-lg flex items-center space-x-3 dark:bg-slate-800/80">
+                 <SunIcon className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                  <input
                     type="range"
                     min="50"
@@ -49,10 +47,10 @@ export const GlobalAccessibilityControls: React.FC<GlobalAccessibilityControlsPr
                     step="10"
                     value={brightness}
                     onChange={onBrightnessChange}
-                    className="w-32 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-500"
+                    className="w-32 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-500 dark:bg-slate-600"
                     aria-label="Adjust website brightness"
                 />
-                 <span className="text-sm font-medium text-slate-700 w-10 text-center">{brightness}%</span>
+                 <span className="text-sm font-medium text-slate-700 w-10 text-center dark:text-slate-200">{brightness}%</span>
             </div>
         </>
     );

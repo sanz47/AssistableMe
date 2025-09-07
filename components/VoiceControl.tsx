@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { findMatchingOption } from '../services/geminiService';
 
 // Check for SpeechRecognition API
 // FIX: Cast window to `any` to access experimental browser APIs (SpeechRecognition) without TypeScript errors.
@@ -6,8 +7,10 @@ const SpeechRecognition = (window as any).SpeechRecognition || (window as any).w
 const isSpeechRecognitionSupported = !!SpeechRecognition;
 
 interface VoiceControlProps {
-    onCommand: (command: string) => void;
+    onCommandMatch: (command: string) => void;
+    availableCommands: string[];
     setToastMessage: (message: string) => void;
+    onNoMatch?: (transcript: string) => void;
 }
 
 const MicIcon: React.FC = () => (
@@ -16,7 +19,7 @@ const MicIcon: React.FC = () => (
     </svg>
 );
 
-export const VoiceControl: React.FC<VoiceControlProps> = ({ onCommand, setToastMessage }) => {
+export const VoiceControl: React.FC<VoiceControlProps> = ({ onCommandMatch, availableCommands, setToastMessage, onNoMatch }) => {
     const [isListening, setIsListening] = useState(false);
     // FIX: Use `any` for the ref type because `SpeechRecognition` is defined as a constant value in this scope, causing a name collision.
     // This also addresses the issue of the `SpeechRecognition` type not being available in standard TypeScript libraries.
@@ -48,15 +51,33 @@ export const VoiceControl: React.FC<VoiceControlProps> = ({ onCommand, setToastM
             setIsListening(false);
         };
 
-        recognition.onresult = (event: any) => {
-            const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        recognition.onresult = async (event: any) => {
+            const transcript = event.results[event.results.length - 1][0].transcript.trim();
             setToastMessage(`Heard: "${transcript}"`);
-            onCommand(transcript);
+            
+            if (!availableCommands || availableCommands.length === 0) {
+                 if (onNoMatch) {
+                    onNoMatch(transcript);
+                } else {
+                    setToastMessage(`No commands available.`);
+                }
+                return;
+            }
+
+            const matchedCommand = await findMatchingOption(transcript, availableCommands);
+
+            if (matchedCommand) {
+                onCommandMatch(matchedCommand);
+            } else if (onNoMatch) {
+                onNoMatch(transcript);
+            } else {
+                setToastMessage(`Unknown command: "${transcript}"`);
+            }
         };
 
         recognitionRef.current = recognition;
 
-    }, [onCommand, setToastMessage]);
+    }, [availableCommands, onCommandMatch, onNoMatch, setToastMessage]);
 
     const handleToggleListening = () => {
         if (!recognitionRef.current) return;

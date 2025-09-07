@@ -108,35 +108,66 @@ export async function generateImage(prompt: string, isSimplified: boolean = fals
   }
 }
 
-export async function findMatchingTask(transcript: string, availableTasks: string[]): Promise<string | null> {
+export async function findMatchingOption(transcript: string, options: string[]): Promise<string | null> {
   try {
-    const prompt = `From the following list of tasks, which one is the best match for the user's request: "${transcript}"?
+    const prompt = `From the following list of options, which one is the best and most direct match for the user's request: "${transcript}"?
 
-    Task List:
-    - ${availableTasks.join('\n- ')}
+    Options List:
+    - ${options.join('\n- ')}
 
-    Respond with ONLY the single, exact task name from the list. If no task is a good match, respond with the word "None".`;
+    Analyze the user's intent. If the request directly corresponds to one of the options, respond with ONLY the single, exact option name from the list. If the user's request is ambiguous or doesn't match any option well, respond with the word "None".`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
+        temperature: 0,
         thinkingConfig: { thinkingBudget: 0 }
       }
     });
 
-    const matchedTask = response.text.trim();
+    const matchedOption = response.text.trim();
     
-    if (availableTasks.includes(matchedTask)) {
-      return matchedTask;
+    if (options.includes(matchedOption)) {
+      return matchedOption;
     }
 
     return null;
   } catch (error) {
-    console.error("Error finding matching task with AI:", error);
+    console.error("Error finding matching option with AI:", error);
     return null;
   }
 }
+
+export async function parseCustomTask(transcript: string): Promise<string | null> {
+    const prefixes = ["create a guide for", "create a new guide for", "make a guide for", "how to", "generate a guide for"];
+    const transcriptLower = transcript.toLowerCase();
+    
+    if (!prefixes.some(p => transcriptLower.startsWith(p))) {
+        return null;
+    }
+
+    try {
+        const prompt = `The user said: "${transcript}". Extract the core task they want a guide for. For example, if they said "Create a guide for how to bake a chocolate cake", respond with "Bake a chocolate cake". Respond with ONLY the concise task name.`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+          config: {
+            temperature: 0,
+            thinkingConfig: { thinkingBudget: 0 }
+          }
+        });
+
+        const task = response.text.trim();
+        return task || null;
+
+    } catch (error) {
+        console.error("Error parsing custom task with AI:", error);
+        return null;
+    }
+}
+
 
 export async function adjustImageForColorBlindness(
   base64ImageData: string,

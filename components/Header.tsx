@@ -2,7 +2,7 @@ import React from 'react';
 import { SpeakButton } from './SpeakButton';
 
 const WaterDropIcon = () => (
-    <svg xmlns="http://www.w.org/2000/svg" className="h-8 w-8 text-sky-400" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-sky-400" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.62 7.724a.75.75 0 00-1.24 0 10.363 10.363 0 000 4.552.75.75 0 001.24 0 8.863 8.863 0 010-4.552zM10 3.167a.75.75 0 01.75.75v11.166a.75.75 0 01-1.5 0V3.917a.75.75 0 01.75-.75zm3.38 4.557a.75.75 0 00-1.24 0 8.863 8.863 0 000 4.552.75.75 0 101.24 0 10.363 10.363 0 000-4.552z" clipRule="evenodd" />
     </svg>
 );
@@ -30,13 +30,13 @@ export const Header: React.FC<HeaderProps> = ({ points, taskName, onGoBack }) =>
   const fullTitle = taskName ? `Guide: ${taskName}` : 'AssistableMe';
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-10">
+    <header className="bg-white shadow-md sticky top-0 z-10 dark:bg-slate-800 dark:border-b dark:border-slate-700">
       <div className="container mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
             {onGoBack && (
                  <button 
                     onClick={onGoBack} 
-                    className="p-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors"
+                    className="p-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors dark:text-slate-300 dark:hover:bg-slate-700"
                     aria-label="Go back to task selection"
                 >
                     <BackIcon />
@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({ points, taskName, onGoBack }) =>
             )}
             {!onGoBack && <WaterDropIcon />}
             <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight dark:text-slate-100">
                     {fullTitle}
                 </h1>
                 <SpeakButton
@@ -53,10 +53,10 @@ export const Header: React.FC<HeaderProps> = ({ points, taskName, onGoBack }) =>
                 />
             </div>
         </div>
-        <div className="flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-full">
+        <div className="flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-full dark:bg-slate-700">
             <TrophyIcon />
-            <span className="font-bold text-lg text-slate-700">{points}</span>
-            <span className="hidden sm:inline text-sm text-slate-500">Points</span>
+            <span className="font-bold text-lg text-slate-700 dark:text-slate-200">{points}</span>
+            <span className="hidden sm:inline text-sm text-slate-500 dark:text-slate-400">Points</span>
         </div>
       </div>
     </header>

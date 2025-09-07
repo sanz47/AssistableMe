@@ -13,7 +13,7 @@ interface StepCardProps {
 }
 
 const ImagePlaceholder: React.FC<{ message: string, isError?: boolean }> = ({ message, isError = false }) => (
-  <div className={`w-full aspect-video rounded-lg flex flex-col items-center justify-center bg-slate-200 ${isError ? 'ring-2 ring-red-400' : ''}`}>
+  <div className={`w-full aspect-video rounded-lg flex flex-col items-center justify-center bg-slate-200 dark:bg-slate-700 ${isError ? 'ring-2 ring-red-400' : ''}`}>
     {isError ? (
        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -24,7 +24,7 @@ const ImagePlaceholder: React.FC<{ message: string, isError?: boolean }> = ({ me
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
     )}
-    <p className={`text-sm font-medium ${isError ? 'text-red-500' : 'text-slate-500'}`}>{message}</p>
+    <p className={`text-sm font-medium ${isError ? 'text-red-500' : 'text-slate-500 dark:text-slate-400'}`}>{message}</p>
   </div>
 );
 
@@ -60,7 +60,7 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
     const POINTS_PER_STEP = 10;
 
     return (
-        <article ref={ref} className={`bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 relative ${isCompleted ? 'ring-2 ring-green-400' : ''}`}>
+        <article ref={ref} className={`bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300 relative ${isCompleted ? 'ring-2 ring-green-400 dark:ring-green-500' : ''} dark:bg-slate-800`}>
         {showConfetti && <Confetti />}
         <div className={`p-6 transition-opacity duration-500 ${isCompleted ? 'opacity-60' : 'opacity-100'}`}>
             <div className="flex items-start space-x-4">
@@ -73,14 +73,14 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
                 </div>
                 <div className="flex-grow">
                     <div className="flex items-center justify-between relative">
-                        <h2 className="text-xl font-bold text-slate-900">{step.title}</h2>
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{step.title}</h2>
                         <SpeakButton
                             textToSpeak={`${step.title}. ${step.description}`}
                             ariaLabel={`Read step ${stepNumber}: ${step.title}`}
                             className="-mr-2"
                         />
                     </div>
-                    <p className="mt-1 text-slate-600">{step.description}</p>
+                    <p className="mt-1 text-slate-600 dark:text-slate-300">{step.description}</p>
                 </div>
                 {isCompleted && <CheckmarkIcon />}
             </div>
@@ -98,7 +98,7 @@ export const StepCard = React.forwardRef<HTMLElement, StepCardProps>(
             <div className="mt-6 flex items-center justify-between">
                 <button
                     onClick={() => fetchImage(true)}
-                    className="px-4 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg shadow-sm hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-all text-sm disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg shadow-sm hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-all text-sm disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
                     disabled={isLoading}
                     aria-label="Generate a simpler alternative image for this step"
                 >

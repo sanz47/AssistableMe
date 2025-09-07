@@ -33,9 +33,17 @@ const loadTasksProgress = (): Record<string, TaskProgress> => {
 const App: React.FC = () => {
     const [mode, setMode] = useState<AppMode>('selection');
     const [selectedTask, setSelectedTask] = useState<string | null>(null);
-    const [isInverted, setIsInverted] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
     const [brightness, setBrightness] = useState(100); // Percentage
     const [tasksProgress, setTasksProgress] = useState<Record<string, TaskProgress>>(loadTasksProgress);
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
 
     useEffect(() => {
         try {
@@ -74,7 +82,7 @@ const App: React.FC = () => {
         setSelectedTask(null); // This goes from TaskGuide back to TaskSelection
     };
 
-    const handleToggleInvert = () => setIsInverted(prev => !prev);
+    const handleToggleDarkMode = () => setIsDarkMode(prev => !prev);
 
     const handleBrightnessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setBrightness(Number(event.target.value));
@@ -143,15 +151,15 @@ const App: React.FC = () => {
     return (
         <div>
             <GlobalAccessibilityControls
-                isInverted={isInverted}
-                onToggleInvert={handleToggleInvert}
+                isDarkMode={isDarkMode}
+                onToggleDarkMode={handleToggleDarkMode}
                 brightness={brightness}
                 onBrightnessChange={handleBrightnessChange}
             />
             <div
-                className="min-h-screen bg-slate-100 font-sans text-slate-800 transition-all duration-300"
+                className="min-h-screen bg-slate-100 font-sans text-slate-800 transition-all duration-300 dark:bg-slate-900 dark:text-slate-200"
                 style={{
-                    filter: `invert(${isInverted ? 1 : 0}) brightness(${brightness / 100})`,
+                    filter: `brightness(${brightness / 100})`,
                 }}
             >
                 {renderContent()}
