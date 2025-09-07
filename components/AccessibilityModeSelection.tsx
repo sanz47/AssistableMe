@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { SpeakButton } from './SpeakButton';
+import { VoiceControl } from './VoiceControl';
 
 const EyeIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -29,13 +30,39 @@ interface AccessibilityModeSelectionProps {
 }
 
 export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProps> = ({ onSelectMode, totalPoints }) => {
+    const [toastMessage, setToastMessage] = useState<string>('');
+
+    useEffect(() => {
+        if (toastMessage) {
+            const timer = setTimeout(() => setToastMessage(''), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [toastMessage]);
+
+    const commands = ['Visual Impairment', 'Cognitive Disability', 'Hearing Impairment'];
+
+    const handleCommandMatch = (command: string) => {
+        setToastMessage(`Activating: ${command}`);
+        switch (command) {
+            case 'Visual Impairment':
+                onSelectMode('visual');
+                break;
+            case 'Cognitive Disability':
+                onSelectMode('cognitive');
+                break;
+            case 'Hearing Impairment':
+                onSelectMode('hearing');
+                break;
+        }
+    };
+
     return (
         <>
             <Header points={totalPoints} />
             <main className="container mx-auto max-w-6xl px-4 py-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-800">AI Accessibility Suite</h2>
-                    <p className="mt-3 text-lg text-slate-600">Select a tool designed to assist with your needs.</p>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100">AI Accessibility Suite</h2>
+                    <p className="mt-3 text-lg text-slate-600 dark:text-slate-400">Select a tool designed to assist with your needs.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div
@@ -43,7 +70,7 @@ export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProp
                         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectMode('visual')}
                         role="button"
                         tabIndex={0}
-                        className="group relative flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-sky-300 cursor-pointer"
+                        className="group relative flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-sky-300 cursor-pointer dark:bg-slate-800"
                         aria-label="Select visual impairment tools"
                     >
                         <div className="absolute top-4 right-4">
@@ -53,8 +80,8 @@ export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProp
                             />
                         </div>
                         <EyeIcon />
-                        <h3 className="text-2xl font-bold mt-4 text-slate-800">Visual Impairment</h3>
-                        <p className="mt-2 text-center text-slate-600">Adjust image colors for various types of color blindness to improve clarity.</p>
+                        <h3 className="text-2xl font-bold mt-4 text-slate-800 dark:text-slate-100">Visual Impairment</h3>
+                        <p className="mt-2 text-center text-slate-600 dark:text-slate-400">Adjust image colors for various types of color blindness to improve clarity.</p>
                     </div>
                     
                     <div
@@ -62,7 +89,7 @@ export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProp
                         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectMode('cognitive')}
                         role="button"
                         tabIndex={0}
-                        className="group relative flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-teal-300 cursor-pointer"
+                        className="group relative flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-teal-300 cursor-pointer dark:bg-slate-800"
                         aria-label="Select cognitive disability guide"
                     >
                         <div className="absolute top-4 right-4">
@@ -72,8 +99,8 @@ export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProp
                             />
                         </div>
                         <BrainIcon />
-                        <h3 className="text-2xl font-bold mt-4 text-slate-800">Cognitive Disability</h3>
-                        <p className="mt-2 text-center text-slate-600">Get interactive, step-by-step AI guides for completing complex tasks.</p>
+                        <h3 className="text-2xl font-bold mt-4 text-slate-800 dark:text-slate-100">Cognitive Disability</h3>
+                        <p className="mt-2 text-center text-slate-600 dark:text-slate-400">Get interactive, step-by-step AI guides for completing complex tasks.</p>
                     </div>
 
                     <div
@@ -81,7 +108,7 @@ export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProp
                         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelectMode('hearing')}
                         role="button"
                         tabIndex={0}
-                        className="group relative flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer md:col-span-2 lg:col-span-1"
+                        className="group relative flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 cursor-pointer md:col-span-2 lg:col-span-1 dark:bg-slate-800"
                         aria-label="Select hearing impairment tool"
                     >
                         <div className="absolute top-4 right-4">
@@ -91,11 +118,21 @@ export const AccessibilityModeSelection: React.FC<AccessibilityModeSelectionProp
                             />
                         </div>
                         <HearingIcon />
-                        <h3 className="text-2xl font-bold mt-4 text-slate-800">Hearing Impairment</h3>
-                        <p className="mt-2 text-center text-slate-600">Generate images from text or speech to aid visual communication.</p>
+                        <h3 className="text-2xl font-bold mt-4 text-slate-800 dark:text-slate-100">Hearing Impairment</h3>
+                        <p className="mt-2 text-center text-slate-600 dark:text-slate-400">Generate images from text or speech to aid visual communication.</p>
                     </div>
                 </div>
             </main>
+            <VoiceControl
+                availableCommands={commands}
+                onCommandMatch={handleCommandMatch}
+                setToastMessage={setToastMessage}
+            />
+            {toastMessage && (
+                <div className="fixed bottom-24 right-5 z-50 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 animate-fade-in-up">
+                    {toastMessage}
+                </div>
+            )}
         </>
     );
 };
